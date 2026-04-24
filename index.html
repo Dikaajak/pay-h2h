@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login | nexa pedia h2h</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1b254b;
+            margin-bottom: 10px;
+        }
+
+        .login-card h2 span {
+            color: #4318ff;
+        }
+
+        .login-card p {
+            font-size: 14px;
+            color: #a3aed0;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1b254b;
+            margin-left: 5px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid #eef2f6;
+            outline: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #4318ff;
+            box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: #1b254b;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #4318ff;
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #a3aed0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2><span>NEXA</span>PEDIA</h2>
+        <p>Masuk ke Dashboard H2H lo</p>
+
+        <div class="input-group">
+            <label>Email Reseller</label>
+            <input type="email" id="email" placeholder="nama@email.com">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button class="btn-login" id="btnLogin" onclick="handleLogin()">Masuk Sekarang</button>
+
+        <div class="footer-text">
+            Belum punya akun? <br>
+            <span style="color: #4318ff; font-weight: 700; cursor: pointer;">Hubungi Admin</span>
+        </div>
+    </div>
+
+    <script>
+        const DB_URL = "https://raw.githubusercontent.com/Dikaajak/pay-h2h/refs/heads/main/user.json";
+
+        async function handleLogin() {
+            const emailInput = document.getElementById('email').value;
+            const passInput = document.getElementById('password').value;
+            const btn = document.getElementById('btnLogin');
+
+            if (!emailInput || !passInput) {
+                alert("Email dan Password wajib diisi!");
+                return;
+            }
+
+            btn.innerText = "Mengecek Akun...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(DB_URL);
+                const users = await response.json();
+
+                const user = users.find(u => u.email === emailInput && u.password === passInput);
+
+                if (user) {
+                    localStorage.setItem('user_email', user.email);
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Email atau Password salah!");
+                }
+            } catch (error) {
+                alert("Gagal terhubung ke database!");
+                console.error(error);
+            } finally {
+                btn.innerText = "Masuk Sekarang";
+                btn.disabled = false;
+            }
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('user_email')) {
+                window.location.href = "dashboard.html";
+            }
+        };
+    </script>
+</body>
+</html>
